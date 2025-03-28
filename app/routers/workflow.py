@@ -1,6 +1,5 @@
 from uuid import uuid4
-from http import HTTPStatus
-from fastapi import APIRouter, BackgroundTasks
+from fastapi import APIRouter, BackgroundTasks, status
 
 from app.utils.tasks import run_task_group
 from app.models.task_group import TaskGroup
@@ -9,8 +8,8 @@ from app.utils.status import get_task_status
 
 router = APIRouter()
 
-@router.post('/')
-def start_workflow(task_group: TaskGroup, background_tasks: BackgroundTasks, status_code=HTTPStatus.ACCEPTED):
+@router.post('/', status_code=status.HTTP_202_ACCEPTED)
+def start_workflow(task_group: TaskGroup, background_tasks: BackgroundTasks):
     workflow_id = str(uuid4())
 
     background_tasks.add_task(run_task_group, workflow_id, task_group)
