@@ -1,9 +1,16 @@
+from __future__ import annotations
+
 from enum import Enum
 from typing import Annotated
-from __future__ import annotations
 from pydantic import AfterValidator, BaseModel
 
 from app.config.tasks import TASK_SWITCHER
+
+def validate_task(task: str):
+    if task not in TASK_SWITCHER.keys():
+        raise ValueError(f'Task #{task} not recognized')
+    
+    return task
 
 class Mode(Enum):
     PARALLEL = 'parallel'
@@ -12,6 +19,6 @@ class Mode(Enum):
 class TaskGroup(BaseModel):
     mode: Mode
     tasks: list[
-        Annotated[str, AfterValidator(lambda task: task in TASK_SWITCHER.keys())] | 
+        Annotated[str, AfterValidator(validate_task)] | 
         TaskGroup
     ]

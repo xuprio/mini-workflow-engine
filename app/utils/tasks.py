@@ -19,7 +19,7 @@ def create_sequential(parent_uuid: str, task_group: list[TaskGroup | str]):
         if isinstance(task, str):
             create_task_status(parent_uuid, task)
 
-    return [Thread(run_in_sequence, (parent_uuid, task_group))]
+    return [Thread(target=run_in_sequence, args=(parent_uuid, task_group))]
 
 
 def run_task(parent_uuid: str, task_id: str):
@@ -35,11 +35,11 @@ def run_task_group(parent_uuid: str, group: TaskGroup):
                 partial(create_single, parent_uuid), 
                 group.tasks
             ))
-
-            for thread in threads:
-                thread.start()
         case Mode.SEQUENCE:
             threads = create_sequential(parent_uuid, group.tasks)
 
+    for thread in threads:
+        thread.start()
+    
     for thread in threads:
         thread.join()
