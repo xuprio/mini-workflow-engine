@@ -18,3 +18,8 @@ def update_task_status(uuid: str, task_name: str, status: Status):
 
 def create_task_status(uuid: str, task_name: str):
     update_task_status(uuid, task_name, Status.PENDING)
+
+
+def get_task_status(uuid: str, task_name: str):
+    with Redis(connection_pool=redis_pool) as conn:
+        return conn.get(f'{uuid}:{task_name}')
