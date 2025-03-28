@@ -12,8 +12,8 @@ class Status(Enum):
 
 
 def update_task_status(uuid: str, task_name: str, status: Status):
-    with Redis().from_pool(redis_pool) as conn:
-        conn.set(f'{uuid}:{task_name}', status)
+    with Redis(connection_pool=redis_pool) as conn:
+        conn.set(f'{uuid}:{task_name}', status.value)
 
 
 def create_task_status(uuid: str, task_name: str):
